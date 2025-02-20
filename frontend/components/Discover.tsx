@@ -133,7 +133,7 @@ export default function Discover() {
       const method = isBookmarked ? 'DELETE' : 'POST'
       const url = isBookmarked 
         ? `${process.env.NEXT_PUBLIC_API_URL}/bookmarks/${articleId}`
-        : '${process.env.NEXT_PUBLIC_API_URL}/bookmarks'
+        : `${process.env.NEXT_PUBLIC_API_URL}/bookmarks`
 
       await fetch(url, {
         method,

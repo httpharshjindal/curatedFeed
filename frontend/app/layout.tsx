@@ -29,8 +29,17 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn Template',
-  description: 'NextJs template with shadcn/ui'
+  title: 'Curated Feed',
+  description: 'Curated Feed is a platform that curates the best articles from around the web.',
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon.png' },
+    ],
+    apple: [
+      { url: '/apple-icon.png' },
+    ],  
+  }
 }
 
 export default function RootLayout({

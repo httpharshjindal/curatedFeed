@@ -29,7 +29,7 @@ export function UpdateInterest() {
           setLoading(true);
           const token = await getToken();
           
-          const response = await fetch('${process.env.NEXT_PUBLIC_API_URL}/users/interests', {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/interests`, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -69,7 +69,7 @@ export function UpdateInterest() {
       setError(null);
       const token = await getToken();
 
-      const response = await fetch('${process.env.NEXT_PUBLIC_API_URL}/users/interests', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/interests`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
