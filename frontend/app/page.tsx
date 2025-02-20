@@ -16,8 +16,6 @@ export default function GetArticles() {
   const [tab, setTab] = useState('discover')
   const { getToken, isLoaded, isSignedIn } = useAuth()
   const [token, setToken] = useState<string | null>(null)
-console.log(process.env.NEXT_PUBLIC_API_URL)
-  // Set tab to discover when user signs in
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       setTab('discover')
@@ -26,13 +24,17 @@ console.log(process.env.NEXT_PUBLIC_API_URL)
 
   return (
     <section>
-      <Tabs value={tab} onValueChange={setTab}>
+      <Tabs value={tab}>
         <TabsList className='w-full justify-around'>
-          <TabsTrigger value='discover' className='w-full'>
+          <TabsTrigger value='discover' className='w-full'
+          onClick={() => setTab('discover')}
+          >
             Discover
           </TabsTrigger>
           <SignedIn>
-            <TabsTrigger value='intrest' className='w-full'>
+            <TabsTrigger value='intrest' className='w-full'
+              onClick={() => setTab('intrest')}
+            >
               Interest
             </TabsTrigger>
           </SignedIn>

@@ -1,6 +1,0 @@
-[build]
-  command = "cd frontend && next build"
-  publish = "frontend/.next"  # or "frontend/out" if you're using next export for a static build
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
