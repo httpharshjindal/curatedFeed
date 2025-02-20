@@ -47,7 +47,7 @@ export default function Interest() {
 
       try {
         const response = await fetch(
-          `http://localhost:3001/api/articles/intrest?page=${currentPage}`, 
+          `${process.env.NEXT_PUBLIC_API_URL}/articles/intrest?page=${currentPage}`, 
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -80,7 +80,7 @@ export default function Interest() {
     const fetchBookmarkStatus = async () => {
       if (!token) return
       try {
-        const response = await fetch(`http://localhost:3001/api/bookmarks`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookmarks`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -102,8 +102,8 @@ export default function Interest() {
       const isBookmarked = bookmarkedArticles.has(articleId)
       const method = isBookmarked ? 'DELETE' : 'POST'
       const url = isBookmarked 
-        ? `http://localhost:3001/api/bookmarks/${articleId}`
-        : 'http://localhost:3001/api/bookmarks'
+        ? `${process.env.NEXT_PUBLIC_API_URL}/bookmarks/${articleId}`
+        : '${process.env.NEXT_PUBLIC_API_URL}/bookmarks'
 
       await fetch(url, {
         method,

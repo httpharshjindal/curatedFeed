@@ -36,7 +36,7 @@ export default function CategoryFilters() {
 
     try {
       const response = await fetch(
-        'http://localhost:3001/api/users/interests',
+        '${process.env.NEXT_PUBLIC_API_URL}/users/interests',
         {
           method: 'POST',
           headers: {

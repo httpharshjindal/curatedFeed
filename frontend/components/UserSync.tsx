@@ -15,7 +15,7 @@
 //           if (token) {
 //             localStorage.setItem('token', token)
 //           }
-//           const response = await fetch('http://localhost:3001/api/users/sync', {
+//           const response = await fetch('${process.env.NEXT_PUBLIC_API_URL}/users/sync', {
 //             method: 'POST',
 //             headers: {
 //               'Authorization': `Bearer ${token}`,

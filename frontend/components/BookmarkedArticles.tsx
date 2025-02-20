@@ -39,7 +39,7 @@ export default function BookmarkedArticles() {
         setLoading(true)
         const token = await getToken()
         const response = await fetch(
-          `http://localhost:3001/api/bookmarks?page=${currentPage}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/bookmarks?page=${currentPage}`,
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -68,7 +68,7 @@ export default function BookmarkedArticles() {
     if (!token) return
     setBookmarkLoading(articleId)
     try {
-      await fetch(`http://localhost:3001/api/bookmarks/${articleId}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookmarks/${articleId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`

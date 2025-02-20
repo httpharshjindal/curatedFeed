@@ -1,0 +1,5 @@
+{
+  "name": "curatedfeed",
+  "private": true,
+  "workspaces": ["backend", "frontend"]
+}

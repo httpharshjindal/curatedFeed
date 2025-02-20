@@ -16,7 +16,7 @@ export default function GetArticles() {
   const [tab, setTab] = useState('discover')
   const { getToken, isLoaded, isSignedIn } = useAuth()
   const [token, setToken] = useState<string | null>(null)
-
+console.log(process.env.NEXT_PUBLIC_API_URL)
   // Set tab to discover when user signs in
   useEffect(() => {
     if (isLoaded && isSignedIn) {

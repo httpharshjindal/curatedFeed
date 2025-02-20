@@ -3,23 +3,26 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "latest",
+    "@types/bun": "^1.2.2",
     "@types/node": "^22.13.4",
     "@types/node-cron": "^3.0.11",
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.4",
-    "ts-node": "^10.9.2"
+    "pg": "^8.13.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3"
   },
   "peerDependencies": {
     "typescript": "^5.7.3"
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^5.1.6",
+    "@hono/node-server": "^1.13.8",
+    "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.39.3",
     "hono": "^4.7.2",
     "node-cron": "^3.0.3",
-    "pg": "^8.13.3",
     "postgres": "^3.4.5"
   },
   "scripts": {
@@ -27,6 +30,7 @@
     "migrate": "npx drizzle-kit migrate",
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
-    "studio": "npx drizzle-kit studio"
+    "studio": "npx drizzle-kit studio",
+    "build": "tsc"
   }
 }
