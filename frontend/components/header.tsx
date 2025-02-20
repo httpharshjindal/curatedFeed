@@ -33,7 +33,7 @@ export default function Header() {
           </SignedOut>
           <SignedIn>
             <Link href='/bookmark'>
-              <Heart className='h-5 w-5 fill-red-500 text-red-500' />
+              <Heart className='h-5 w-5 fill-red-500 text-red-500 hover:fill-red-600 hover:text-red-600' />
             </Link>
             <UpdateInterest />
             <UserButton />

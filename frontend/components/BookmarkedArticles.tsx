@@ -108,7 +108,7 @@ export default function BookmarkedArticles() {
                 />
               ))
             ) : (
-              <div>No favourite articles!</div>
+              <div className='text-center text-muted-foreground'>No favourite articles,Add One!</div>
             )}
           </div>
 
