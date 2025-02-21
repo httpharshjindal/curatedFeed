@@ -1,43 +1,62 @@
-# Curated Feed
+# 📚 Curated Feed
+
+The Article Curation App is a personalized content discovery platform that delivers curated articles based on user interests. The app provides a seamless reading experience with a thoughtful onboarding flow and intuitive content organization.
 
 ## Overview
-A modern web application that provides personalized article recommendations based on user interests. The platform aggregates articles from across the web using Serper.dev and Google AI Studio APIs, delivering a curated reading experience tailored to each user's preferences.
 
-## Key Features
-- 🔐 Secure authentication with Clerk
-- 📱 Responsive design for all devices
-- 🔄 Real-time article updates (hourly)
-- 💾 Bookmark favorite articles
-- 🎯 Personalized content feed
-- 🔍 Discovery feed for exploring new topics
-- ⚡ High-performance backend with Bun + Hono
+Curated Feed is a content discovery platform that provides users with personalized article recommendations. The application offers a seamless reading experience with intuitive content organization and smart user onboarding.
 
-## Tech Stack
+### Core Functionality
+- Personalized article recommendations
+- Interest-based content filtering
+- Bookmark system for saving articles
+- Real-time content updates
+- Responsive design across devices
 
-### Backend
+## Features
+
+### User Experience
+- **Landing Page**: Display of 10 featured articles with infinite scroll
+- **Authentication**: Clerk-based secure user management
+- **Onboarding**: Guided interest selection process
+
+### Content Organization
+1. **Discover Tab**
+   - Global article feed
+   - Cross-category content
+   - Regular content updates
+
+2. **Interests Tab**
+   - Personalized article feed
+   - Interest-based filtering
+   - Real-time preference updates
+
+3. **Favorites Section**
+   - Bookmarked articles collection
+   - Easy access via navigation bar
+   - One-click bookmarking system
+
+### Key Features
+- Interest management through header button
+- Heart-based bookmarking system
+- Automatic content refresh
+- Mobile-responsive design
+
+## Architecture
+
+### Backend Stack
 - **Runtime**: Bun
 - **Framework**: Hono
 - **Database**: PostgreSQL (Neon.tech)
 - **ORM**: Drizzle
-- **Scheduling**: Node-cron
+- **Scheduler**: Node-cron
 - **Language**: TypeScript
-- **APIs**: Serper.dev, Google AI Studio
 
-### Frontend
-- **Framework**: Next.js 14
+### Frontend Stack
+- **Framework**: Next.js
 - **Styling**: Tailwind CSS + shadcn/ui
-- **Authentication**: Clerk
+- **Auth**: Clerk
 - **Language**: TypeScript
-- **State Management**: React Context + React Query
-
-## Architecture
-The application follows a modern microservices architecture:
-- Frontend deployed on Netlify
-- Backend deployed on Render
-- Database hosted on Neon.tech
-- Automated article fetching using cron jobs
-- RESTful API design with proper error handling
-- TypeScript for type safety across the stack
 
 ## Getting Started
 
@@ -47,63 +66,47 @@ The application follows a modern microservices architecture:
 - Docker (optional)
 - PostgreSQL
 
-### Environment Variables for frontend
+### Environment Setup
+
+#### Frontend Variables
 ```env
-NEXT_PUBLIC_API_URL
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-CLERK_SECRET_KEY
+NEXT_PUBLIC_API_URL=
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
 NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
 NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
 ```
-### Environment Variables for backend
+
+#### Backend Variables
 ```env
-DATABASE_URL
-SERPER_API_KEY
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-CLERK_SECRET_KEY
-PORT
+DATABASE_URL=
+SERPER_API_KEY=
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+PORT=
 ```
 
-## Features Breakdown
-
-### User Flow
-1. Users browse initial articles on landing page
-2. Sign up/Sign in prompted after reaching article limit
-3. Select interests during onboarding
-4. Access personalized feed based on interests
-5. Bookmark favorite articles
-6. Update interests anytime
-
-### Feed Types
-- **Discover**: Global feed showing latest articles across all categories
-- **Interests**: Personalized feed based on user preferences
-- **Favorites**: Bookmarked articles
-
-## Deployment
-- Frontend: Netlify
-- Backend: Render
-- Database: Neon.tech
-
+## Development
 
 ### Installation
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/article-curation-app.git
+git clone https://github.com/yourusername/curated-feed.git
 ```
 
 2. Install dependencies
 ```bash
-# Backend
+# Backend setup
 cd backend
 bun install
 
-# Frontend
+# Frontend setup
 cd frontend
 npm install
 ```
 
-3. Start the development servers
+3. Start development servers
 ```bash
 # Backend
 bun run dev
@@ -117,9 +120,27 @@ npm run dev
 docker-compose up
 ```
 
+## User Flow
+1. Browse initial articles
+2. Sign up/in after reaching limit
+3. Select interests during onboarding
+4. Access personalized feed
+5. Bookmark favorite articles
+6. Manage interests
+
+## Deployment
+
+### Production Endpoints
+- **Frontend**: Netlify
+- **Backend**: Render
+- **Database**: Neon.tech
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+We welcome contributions! For major changes:
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
+4. Open an issue for discussion
 
 ## License
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
