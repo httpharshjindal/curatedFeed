@@ -171,7 +171,7 @@ export default function Interest() {
                   />
                 </PaginationItem>
                 
-                {[...Array(totalPages)].map((_, index) => (
+                {[...Array(3)].map((_, index) => (
                   <PaginationItem key={index + 1}>
                     <PaginationLink
                       onClick={() => handlePageChange(index + 1)}

@@ -52,7 +52,7 @@ const ArticleCard = ({
 
   return (
     <div className='relative mx-6 my-auto rounded-lg'>
-      <div className='z-50 flex absolute items-center gap-2 top-1 right-1'>
+      <div className='z-10 flex absolute items-center gap-2 top-1 right-1'>
         <Button
           variant='ghost'
           size='icon'

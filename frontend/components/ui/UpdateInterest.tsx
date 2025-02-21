@@ -96,9 +96,9 @@ export function UpdateInterest() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">Update Interests</Button>
+        <Button variant="outline" className="hover:bg-neutral-100 dark:hover:bg-neutral-800" size="sm">Update Interests</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className=" w-4/5 sm:max-w-[425px]">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/80">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -108,14 +108,14 @@ export function UpdateInterest() {
           <DialogTitle>Update Your Interests</DialogTitle>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4 py-4 ">
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 w-full">
             {categories.map(category => (
               <Button
                 key={category}
                 onClick={() => handleCategoryClick(category)}
-                className={`${categoryColors[category]} ${
+                className={`text-xs sm:text-sm ${categoryColors[category]} ${
                   selectedCategories.includes(category) 
                     ? 'ring-2 ring-primary' 
                     : ''
