@@ -1,4 +1,4 @@
-# Article Curation App
+# Curated Feed
 
 ## Overview
 A modern web application that provides personalized article recommendations based on user interests. The platform aggregates articles from across the web using Serper.dev and Google AI Studio APIs, delivering a curated reading experience tailored to each user's preferences.
