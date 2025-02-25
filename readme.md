@@ -1,5 +1,9 @@
 # 📚 Curated Feed
 
+
+https://github.com/user-attachments/assets/bd7be10c-4a42-450c-bc74-8736acc52966
+
+
 The Article Curation App is a personalized content discovery platform that delivers curated articles based on user interests. The app provides a seamless reading experience with a thoughtful onboarding flow and intuitive content organization.
 
 ## Overview
