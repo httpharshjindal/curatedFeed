@@ -121,7 +121,6 @@ export default function Discover() {
         const data = await response.json()
         setBookmarkedArticles(new Set(data.articles.map((a: Article) => a.id)))
       } catch (error) {
-        toast.error("Failed to fetch bookmark status")
         console.error('Error fetching bookmark status:', error)
       }
     }
