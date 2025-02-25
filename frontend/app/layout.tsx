@@ -9,7 +9,6 @@ import Header from '@/components/header'
 import Footer from '@/components/footer'
 
 import './globals.css'
-// import UserSync from '@/components/UserSync'
 import { InterestProvider } from '@/context/InterestContext'
 
 const geistSans = localFont({

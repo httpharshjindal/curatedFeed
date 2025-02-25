@@ -1,5 +1,5 @@
 'use client'
-import { Button } from './button'
+import { Button } from '@/components/ui/button'
 import { categoryColors } from '@/lib/utils'
 import { categories } from '@/lib/utils'
 import { useAuth } from '@clerk/nextjs'

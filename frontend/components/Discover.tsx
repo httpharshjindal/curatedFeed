@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import ArticleCard from './ui/ArticleCard'
-import ArticleCardSkeleton from './ui/ArticleCardSkeleton'
+import ArticleCard from './ArticleCard'
+import ArticleCardSkeleton from './ArticleCardSkeleton'
 import { SignedOut, SignInButton, useAuth } from '@clerk/nextjs'
 import { Article } from '@/lib/utils'
 
@@ -14,6 +14,7 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination'
+import { toast } from 'sonner'
 
 export default function Discover() {
   const { getToken, isLoaded } = useAuth()
@@ -65,6 +66,7 @@ export default function Discover() {
         setDiscoverArticles(data.articles)
         setTotalPages(Math.ceil(data.total / 20)) // Assuming 20 articles per page
       } catch (err) {
+        toast.error("Failed to fetch articles")
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoading(false)
@@ -82,10 +84,10 @@ export default function Discover() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!token && !hasShownDialog) {
+      if (!token) {
         const scrollPosition = window.innerHeight + window.scrollY;
         const documentHeight = document.documentElement.scrollHeight;
-        const isAtBottom = scrollPosition >= documentHeight - 100;
+        const isAtBottom = scrollPosition >= documentHeight;
         
         if (isAtBottom) {
           setShowSignInDialog(true)
@@ -102,6 +104,7 @@ export default function Discover() {
     if (showSignInDialog) {
       signInButtonRef.current?.click()
       setShowSignInDialog(false)
+      window.scrollTo(0, 0)
     }
   }, [showSignInDialog])
 
@@ -118,6 +121,7 @@ export default function Discover() {
         const data = await response.json()
         setBookmarkedArticles(new Set(data.articles.map((a: Article) => a.id)))
       } catch (error) {
+        toast.error("Failed to fetch bookmark status")
         console.error('Error fetching bookmark status:', error)
       }
     }
@@ -154,6 +158,7 @@ export default function Discover() {
         return next
       })
     } catch (error) {
+      toast.error("Failed to toggle bookmark")
       console.error('Error toggling bookmark:', error)
     } finally {
       setBookmarkLoading(null)

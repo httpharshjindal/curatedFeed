@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
-import ArticleCard from './ui/ArticleCard'
-import ArticleCardSkeleton from './ui/ArticleCardSkeleton'
+import ArticleCard from './ArticleCard'
+import ArticleCardSkeleton from './ArticleCardSkeleton'
 import { useAuth } from '@clerk/nextjs'
 import { Article } from '@/lib/utils'
 import { useInterest } from '@/context/InterestContext'
@@ -13,7 +13,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-
+import { toast } from 'sonner'
 export default function Interest() {
   const { getToken } = useAuth()
   const { refreshTrigger } = useInterest()
@@ -62,8 +62,9 @@ export default function Interest() {
 
         const data = await response.json()
         setInterestArticles(data.articles)
-        setTotalPages(Math.ceil(data.total / 20)) // Assuming 20 articles per page
+        setTotalPages(Math.ceil(data.total / 20))
       } catch (err) {
+        toast.error("Failed to fetch articles")
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoading(false)
@@ -88,6 +89,7 @@ export default function Interest() {
         const data = await response.json()
         setBookmarkedArticles(new Set(data.articles.map((a: Article) => a.id)))
       } catch (error) {
+        toast.error("Failed to fetch bookmark status")
         console.error('Error fetching bookmark status:', error)
       }
     }
@@ -96,6 +98,7 @@ export default function Interest() {
   }, [token])
 
   const handleToggleBookmark = async (articleId: number) => {
+    console.log(articleId)
     if (!token) return
     setBookmarkLoading(articleId)
     try {
@@ -103,8 +106,7 @@ export default function Interest() {
       const method = isBookmarked ? 'DELETE' : 'POST'
       const url = isBookmarked 
         ? `${process.env.NEXT_PUBLIC_API_URL}/bookmarks/${articleId}`
-        : '${process.env.NEXT_PUBLIC_API_URL}/bookmarks'
-
+        : `${process.env.NEXT_PUBLIC_API_URL}/bookmarks`
       await fetch(url, {
         method,
         headers: {
@@ -124,6 +126,7 @@ export default function Interest() {
         return next
       })
     } catch (error) {
+      toast.error("Failed to toggle bookmark")
       console.error('Error toggling bookmark:', error)
     } finally {
       setBookmarkLoading(null)

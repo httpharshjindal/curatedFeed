@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Button } from '@/components/ui/button'
-import { UpdateInterest } from './ui/UpdateInterest'
+import { UpdateInterest } from './UpdateInterest'
 import { Heart, Menu, X } from 'lucide-react'
 
 export default function Header() {

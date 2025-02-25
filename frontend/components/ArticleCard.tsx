@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ExternalLink, Heart } from 'lucide-react'
-import { Button } from './button'
+import { Button } from '@/components/ui/button'
 
 interface Article {
   id: number
@@ -59,6 +59,7 @@ const ArticleCard = ({
           onClick={e => {
             e.stopPropagation()
             onToggleBookmark(article.id)
+          
           }}
           disabled={loading}
           className='h-8 w-8 p-0'

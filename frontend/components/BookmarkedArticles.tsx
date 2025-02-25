@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
-import ArticleCard from './ui/ArticleCard'
-import ArticleCardSkeleton from './ui/ArticleCardSkeleton'
+import ArticleCard from '@/components/ArticleCard'
+import ArticleCardSkeleton from '@/components/ArticleCardSkeleton'
 import { Article } from '@/lib/utils'
 import {
   Pagination,
@@ -13,7 +13,7 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination'
-
+import { toast } from 'sonner'
 interface BookmarkResponse {
   articles: Article[]
   pagination: {
@@ -50,6 +50,7 @@ export default function BookmarkedArticles() {
         setBookmarkedArticles(data.articles)
         setTotalPages(Math.ceil(data.pagination.total / 20))
       } catch (error) {
+        toast("Failed to fetch bookmarked articles")
         setError('Failed to fetch bookmarked articles')
       } finally {
         setLoading(false)
@@ -80,6 +81,7 @@ export default function BookmarkedArticles() {
         prev.filter(article => article.id !== articleId)
       )
     } catch (error) {
+      toast("Failed to remove bookmark")
       console.error('Error removing bookmark:', error)
     } finally {
       setBookmarkLoading(null)
