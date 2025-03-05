@@ -21,7 +21,7 @@ export default function GetArticles() {
       setTab('discover')
     }
   }, [isLoaded, isSignedIn])
-
+  
   return (
     <section>
       <Tabs value={tab}>

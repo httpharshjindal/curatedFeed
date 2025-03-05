@@ -10,7 +10,7 @@ import { Heart, Menu, X } from 'lucide-react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
+  const [open, setOpen] = useState(false)
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
@@ -43,7 +43,20 @@ export default function Header() {
             <Link href='/bookmark'>
               <Heart className='h-5 w-5 fill-red-500 text-red-500 hover:fill-red-600 hover:text-red-600' />
             </Link>
-            <UpdateInterest />
+            <div>
+              {/* Place this button anywhere you want */}
+              <Button
+                variant='outline'
+                className='hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                size='sm'
+                onClick={() => setOpen(true)}
+              >
+                Update Interests
+              </Button>
+
+              {/* Render the dialog separately */}
+              <UpdateInterest open={open} setOpen={setOpen} />
+            </div>
             <UserButton />
           </SignedIn>
         </div>
@@ -78,12 +91,25 @@ export default function Header() {
                 </SignInButton>
               </SignedOut>
               <SignedIn>
-                <div className='flex flex-col gap-4 items-end'>
+                <div className='flex flex-col items-end gap-4'>
                   <div className='px-4 py-2'>
                     <UserButton />
                   </div>
                   <div className='px-4 py-2'>
-                    <UpdateInterest />
+                    <div>
+                      {/* Place this button anywhere you want */}
+                      <Button
+                        variant='outline'
+                        className='hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                        size='sm'
+                        onClick={() => setOpen(true)}
+                      >
+                        Update Interests
+                      </Button>
+
+                      {/* Render the dialog separately */}
+                      <UpdateInterest open={open} setOpen={setOpen} />
+                    </div>
                   </div>
                 </div>
               </SignedIn>

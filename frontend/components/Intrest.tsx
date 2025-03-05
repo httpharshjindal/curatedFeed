@@ -5,15 +5,11 @@ import ArticleCardSkeleton from './ArticleCardSkeleton'
 import { useAuth } from '@clerk/nextjs'
 import { Article } from '@/lib/utils'
 import { useInterest } from '@/context/InterestContext'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
 import { toast } from 'sonner'
+import SlidingPagination from './SlidingPagination'
+import { useUserInterests } from '@/hook/useUserInterests'
+import { useRouter } from 'next/navigation'
+
 export default function Interest() {
   const { getToken } = useAuth()
   const { refreshTrigger } = useInterest()
@@ -24,8 +20,30 @@ export default function Interest() {
   const [token, setToken] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [bookmarkedArticles, setBookmarkedArticles] = useState<Set<number>>(new Set())
+  const [bookmarkedArticles, setBookmarkedArticles] = useState<Set<number>>(
+    new Set()
+  )
+  const router = useRouter()
   const [bookmarkLoading, setBookmarkLoading] = useState<number | null>(null)
+  const {
+    interests,
+    loading: hookLoading,
+    error: hookError,
+    refreshInterests
+  } = useUserInterests(true)
+
+  // Separate effect for redirection
+  useEffect(() => {
+    // Delay the check slightly to ensure all loading is complete
+    const timer = setTimeout(() => {
+      if (!hookLoading && (!interests || interests.length === 0)) {
+        console.log('Redirecting due to no interests')
+        router.push('/updateIntrest')
+      }
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [hookLoading, interests, router])
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -36,7 +54,6 @@ export default function Interest() {
         setError('Failed to retrieve authentication token')
       }
     }
-
     fetchToken()
   }, [getToken])
 
@@ -47,7 +64,7 @@ export default function Interest() {
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/articles/intrest?page=${currentPage}`, 
+          `${process.env.NEXT_PUBLIC_API_URL}/articles/intrest?page=${currentPage}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -55,56 +72,54 @@ export default function Interest() {
             }
           }
         )
-
         if (!response.ok) {
           throw new Error('Failed to fetch articles')
         }
-
         const data = await response.json()
         setInterestArticles(data.articles)
         setTotalPages(Math.ceil(data.total / 20))
       } catch (err) {
-        toast.error("Failed to fetch articles")
+        toast.error('Failed to fetch articles')
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoading(false)
       }
     }
-
     if (token) {
       fetchArticles()
     }
-  }, [tab, token, refreshTrigger, currentPage])
+  }, [tab, token, refreshTrigger, currentPage, interests])
 
   // Fetch bookmark status for all articles
   useEffect(() => {
     const fetchBookmarkStatus = async () => {
       if (!token) return
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookmarks`, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/bookmarks`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        })
+        )
         const data = await response.json()
         setBookmarkedArticles(new Set(data.articles.map((a: Article) => a.id)))
       } catch (error) {
-        toast.error("Failed to fetch bookmark status")
+        toast.error('Failed to fetch bookmark status')
         console.error('Error fetching bookmark status:', error)
       }
     }
-
     fetchBookmarkStatus()
   }, [token])
 
   const handleToggleBookmark = async (articleId: number) => {
-    console.log(articleId)
     if (!token) return
     setBookmarkLoading(articleId)
     try {
       const isBookmarked = bookmarkedArticles.has(articleId)
       const method = isBookmarked ? 'DELETE' : 'POST'
-      const url = isBookmarked 
+      const url = isBookmarked
         ? `${process.env.NEXT_PUBLIC_API_URL}/bookmarks/${articleId}`
         : `${process.env.NEXT_PUBLIC_API_URL}/bookmarks`
       await fetch(url, {
@@ -115,18 +130,13 @@ export default function Interest() {
         },
         ...(method === 'POST' && { body: JSON.stringify({ articleId }) })
       })
-
       setBookmarkedArticles(prev => {
         const next = new Set(prev)
-        if (isBookmarked) {
-          next.delete(articleId)
-        } else {
-          next.add(articleId)
-        }
+        isBookmarked ? next.delete(articleId) : next.add(articleId)
         return next
       })
     } catch (error) {
-      toast.error("Failed to toggle bookmark")
+      toast.error('Failed to toggle bookmark')
       console.error('Error toggling bookmark:', error)
     } finally {
       setBookmarkLoading(null)
@@ -149,7 +159,7 @@ export default function Interest() {
       ) : (
         <>
           <div className='w-full space-y-4 py-4'>
-            {InterestArticles.length > 0 ? (
+            {InterestArticles && InterestArticles.length > 0 ? (
               InterestArticles.map(article => (
                 <ArticleCard
                   key={article.id}
@@ -160,40 +170,18 @@ export default function Interest() {
                 />
               ))
             ) : (
-              <div className='text-center text-2xl font-bold'>No articles found</div>
+              <div className='text-center text-2xl font-bold'>
+                No articles found
+              </div>
             )}
           </div>
-          
-          {totalPages > 1 && (
-            <Pagination className="py-4">
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  />
-                </PaginationItem>
-                
-                {[...Array(3)].map((_, index) => (
-                  <PaginationItem key={index + 1}>
-                    <PaginationLink
-                      onClick={() => handlePageChange(index + 1)}
-                      isActive={currentPage === index + 1}
-                    >
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          )}
+          <div>
+            <SlidingPagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </>
       )}
     </div>

@@ -6,15 +6,8 @@ import ArticleCardSkeleton from './ArticleCardSkeleton'
 import { SignedOut, SignInButton, useAuth } from '@clerk/nextjs'
 import { Article } from '@/lib/utils'
 
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious
-} from '@/components/ui/pagination'
 import { toast } from 'sonner'
+import SlidingPagination from './SlidingPagination'
 
 export default function Discover() {
   const { getToken, isLoaded } = useAuth()
@@ -27,13 +20,16 @@ export default function Discover() {
   const [showSignInDialog, setShowSignInDialog] = useState(false)
   const [hasShownDialog, setHasShownDialog] = useState(false)
   const signInButtonRef = useRef<HTMLButtonElement>(null)
-  const [bookmarkedArticles, setBookmarkedArticles] = useState<Set<number>>(new Set())
+  const [bookmarkedArticles, setBookmarkedArticles] = useState<Set<number>>(
+    new Set()
+  )
   const [bookmarkLoading, setBookmarkLoading] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        if (isLoaded) {  // Only fetch token if Clerk is loaded
+        if (isLoaded) {
+          // Only fetch token if Clerk is loaded
           const fetchedToken = await getToken()
           setToken(fetchedToken)
         }
@@ -41,13 +37,12 @@ export default function Discover() {
         setError('Failed to retrieve authentication token')
       }
     }
-
     fetchToken()
-  }, [getToken, isLoaded])  // Add isLoaded to dependencies
+  }, [getToken, isLoaded]) // Add isLoaded to dependencies
 
   useEffect(() => {
+    setLoading(true)
     const fetchArticles = async (url: string) => {
-      setLoading(true)
       setError(null)
 
       try {
@@ -66,7 +61,7 @@ export default function Discover() {
         setDiscoverArticles(data.articles)
         setTotalPages(Math.ceil(data.total / 20)) // Assuming 20 articles per page
       } catch (err) {
-        toast.error("Failed to fetch articles")
+        toast.error('Failed to fetch articles')
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoading(false)
@@ -85,10 +80,10 @@ export default function Discover() {
   useEffect(() => {
     const handleScroll = () => {
       if (!token) {
-        const scrollPosition = window.innerHeight + window.scrollY;
-        const documentHeight = document.documentElement.scrollHeight;
-        const isAtBottom = scrollPosition >= documentHeight;
-        
+        const scrollPosition = window.innerHeight + window.scrollY
+        const documentHeight = document.documentElement.scrollHeight
+        const isAtBottom = scrollPosition >= documentHeight
+
         if (isAtBottom) {
           setShowSignInDialog(true)
           setHasShownDialog(true)
@@ -113,11 +108,14 @@ export default function Discover() {
     const fetchBookmarkStatus = async () => {
       if (!token) return
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookmarks`, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/bookmarks`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        })
+        )
         const data = await response.json()
         setBookmarkedArticles(new Set(data.articles.map((a: Article) => a.id)))
       } catch (error) {
@@ -129,16 +127,19 @@ export default function Discover() {
   }, [token])
 
   const handleToggleBookmark = async (articleId: number) => {
-    if (!token) return
+    if (!token) {
+      toast.error('Please sign in to bookmark articles')
+      return
+    }
     setBookmarkLoading(articleId)
     try {
       const isBookmarked = bookmarkedArticles.has(articleId)
       const method = isBookmarked ? 'DELETE' : 'POST'
-      const url = isBookmarked 
+      const url = isBookmarked
         ? `${process.env.NEXT_PUBLIC_API_URL}/bookmarks/${articleId}`
         : `${process.env.NEXT_PUBLIC_API_URL}/bookmarks`
 
-      await fetch(url, {
+      const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +147,6 @@ export default function Discover() {
         },
         ...(method === 'POST' && { body: JSON.stringify({ articleId }) })
       })
-
       setBookmarkedArticles(prev => {
         const next = new Set(prev)
         if (isBookmarked) {
@@ -157,7 +157,7 @@ export default function Discover() {
         return next
       })
     } catch (error) {
-      toast.error("Failed to toggle bookmark")
+      toast.error('Failed to toggle bookmark')
       console.error('Error toggling bookmark:', error)
     } finally {
       setBookmarkLoading(null)
@@ -179,9 +179,9 @@ export default function Discover() {
         </div>
       ) : (
         <>
-          <div className='w-full space-y-4 py-4'>
-            {DiscoverArticles.length > 0 ? (
-              DiscoverArticles.map(article => (
+          {DiscoverArticles && DiscoverArticles.length > 0 ? (
+            <>
+              {DiscoverArticles.map(article => (
                 <ArticleCard
                   key={article.id}
                   article={article}
@@ -189,50 +189,26 @@ export default function Discover() {
                   onToggleBookmark={handleToggleBookmark}
                   loading={bookmarkLoading === article.id}
                 />
-              ))
-            ) : (
-              <div className='text-center text-2xl font-bold'>
-                No articles found
+              ))}
+              <div className='mt-4'>
+                <SlidingPagination
+                  totalPages={totalPages}
+                  currentPage={currentPage}
+                  onPageChange={handlePageChange}
+                />
               </div>
-            )}
-          </div>
-
-          {totalPages > 1 && (
-            <Pagination className='py-4'>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  />
-                </PaginationItem>
-
-                {[...Array(3)].map((_, index) => (
-                  <PaginationItem key={index + 1}>
-                    <PaginationLink
-                      onClick={() => handlePageChange(index + 1)}
-                      isActive={currentPage === index + 1}
-                    >
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+            </>
+          ) : (
+            <div className='text-center text-2xl font-bold'>
+              No articles found
+            </div>
           )}
         </>
       )}
 
       <SignedOut>
         <SignInButton mode='modal'>
-          <button ref={signInButtonRef} className="hidden">
+          <button ref={signInButtonRef} className='hidden'>
             Sign In
           </button>
         </SignInButton>
