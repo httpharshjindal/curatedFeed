@@ -12,7 +12,7 @@ export const SliderContent = ({
   }
 
   return (
-    <div className='rounded-lg bg-white p-5 text-gray-900 shadow-md dark:bg-gray-900 dark:text-gray-100'>
+    <div className='rounded-lg bg-white p-5 mt-5 text-gray-900 shadow-md dark:bg-gray-900 dark:text-gray-100'>
       <div>
         <h3 className='py-5 text-3xl font-bold'>Summary</h3>
         <p>{processedArticle.summary || 'No summary available'}</p>

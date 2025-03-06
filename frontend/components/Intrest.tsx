@@ -69,7 +69,7 @@ export default function Intrest() {
 
     if (token) {
       fetchArticles(
-        `${process.env.NEXT_PUBLIC_API_URL}/articles/discover?page=${currentPage}`
+        `${process.env.NEXT_PUBLIC_API_URL}/articles/intrest?page=${currentPage}`
       )
     }
   }, [token, currentPage])
