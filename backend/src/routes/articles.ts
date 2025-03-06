@@ -2,10 +2,9 @@
 import { Hono } from "hono";
 import { db } from "../db/drizzle";
 import { articles, processedArticles } from "../db/schema";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, inArray, sql, isNotNull } from "drizzle-orm";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { userInterests } from "../db/schema";
-
 // Define Clerk user type
 interface ClerkUser {
   id: string;
@@ -41,7 +40,6 @@ articlesRoute.get("/", async (c) => {
     );
   }
 });
-
 
 articlesRoute.get("/intrest", authMiddleware, async (c) => {
   try {
@@ -82,7 +80,9 @@ articlesRoute.get("/intrest", authMiddleware, async (c) => {
       .where(
         and(
           inArray(articles.category, categories),
-          eq(articles.processed, true)
+          isNull(articles.processingError),
+          eq(articles.processed, true),
+          isNotNull(articles.content)
         )
       )
       .orderBy(desc(articles.createdAt))
@@ -120,7 +120,13 @@ articlesRoute.get("/discover", authMiddleware, async (c) => {
     const allArticles = await db
       .select()
       .from(articles)
-      .where(eq(articles.processed, true))
+      .where(
+        and(
+          isNull(articles.processingError),
+          eq(articles.processed, true),
+          isNotNull(articles.content)
+        )
+      )
       .orderBy(desc(articles.createdAt))
       .limit(pageSize)
       .offset(offset);
@@ -149,6 +155,7 @@ articlesRoute.get("/:id", async (c) => {
       .select()
       .from(articles)
       .where(eq(articles.id, articleId));
+
     const processedArticle = await db
       .select()
       .from(processedArticles)
