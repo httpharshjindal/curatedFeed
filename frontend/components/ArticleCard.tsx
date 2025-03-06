@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ExternalLink, Heart } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import { Article, ProcessedArticle } from '@/lib/utils'
 import {
@@ -53,7 +54,7 @@ const ArticleCard = ({
   const [error, setError] = useState<string | null>(null)
   const [sliderLoading, setSliderLoading] = useState(false)
   const [newArticles, setNewArticles] = useState<Article[]>([])
-  
+
   const handleClick = () => {
     // Only fetch if we don't already have data
     if (!processedArticle.keyTakeaways?.length) {
@@ -61,24 +62,27 @@ const ArticleCard = ({
       fetchArticleData()
     }
   }
-  
+
   const fetchArticleData = async () => {
     setError(null)
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${article.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/articles/${article.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
 
       if (!response.ok) {
         throw new Error('Failed to fetch article data')
       }
 
       const data = await response.json()
-            
+
       setProcessedArticle(data.article.processedData)
       setNewArticles(data.article.article)
     } catch (err) {
@@ -88,7 +92,7 @@ const ArticleCard = ({
       setSliderLoading(false)
     }
   }
-  
+
   const categoryColorClasses =
     categoryColors[article.category.toLowerCase()] ||
     'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100'
@@ -115,9 +119,7 @@ const ArticleCard = ({
                   />
                 </Button>
               </div>
-              <Card
-                className='mb-4 w-[90vw] cursor-pointer bg-card text-card-foreground transition-shadow hover:shadow-lg'
-              >
+              <Card className='mb-4 w-[90vw] cursor-pointer bg-card text-card-foreground transition-shadow hover:shadow-lg'>
                 <CardHeader className='space-y-2'>
                   <div className='flex items-start justify-between gap-4'>
                     <CardTitle className='flex items-center gap-2 text-sm font-bold text-foreground sm:text-2xl'>
@@ -153,20 +155,31 @@ const ArticleCard = ({
         <SheetContent side={'bottom'} className='h-full overflow-y-scroll'>
           <div>
             <SheetHeader>
-              <SheetTitle>{article.title}</SheetTitle>
+              <SheetTitle className='text-center text-sm sm:text-2xl'>
+                {article.title}
+              </SheetTitle>
 
               <SheetDescription>
                 <div>
                   <div>
-                    <h3>{article.content}</h3>
+                    <h3 className='text-xs sm:text-sm'>{article.content}</h3>
                   </div>
                   {sliderLoading ? (
                     <p>Loading article data...</p>
                   ) : error ? (
-                    <p className="text-red-500">Error: {error}</p>
+                    <p className='text-red-500'>Error: {error}</p>
                   ) : (
                     <SliderContent processedArticle={processedArticle} />
                   )}
+                  <div className='flex items-center gap-2 mt-5'>
+                    <a href={article.link} target='_blank' rel='noreferrer'>
+                      <span
+                        className={`mt-5 whitespace-nowrap rounded-full px-2 py-1 text-[8px] sm:text-sm ${categoryColorClasses}`}
+                      >
+                        Source:{article.link}
+                      </span>
+                    </a>
+                  </div>
                 </div>
               </SheetDescription>
             </SheetHeader>
