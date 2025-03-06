@@ -19,7 +19,7 @@ interface ArticleCardProps {
   isBookmarked: boolean
   onToggleBookmark: (articleId: number) => Promise<void>
   loading?: boolean
-  token: string
+  token?: string
 }
 
 // Match the schema enum categories
