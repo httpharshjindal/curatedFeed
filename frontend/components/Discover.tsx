@@ -188,6 +188,7 @@ export default function Discover() {
                   isBookmarked={bookmarkedArticles.has(article.id)}
                   onToggleBookmark={handleToggleBookmark}
                   loading={bookmarkLoading === article.id}
+                  token={token || ""}
                 />
               ))}
               <div className='mt-4'>

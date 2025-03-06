@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -15,6 +15,21 @@ export interface Article {
   position: number
   createdAt: Date
   updatedAt: Date
+  content: string
+}
+
+export interface ProcessedArticle {
+  id?: number;
+  articleId?: number;
+  refinedTitle: string;
+  refinedArticle: string;
+  summary: string;
+  keyTakeaways: string[];
+  originalContent?: {
+    title: string;
+    content: string;
+  };
+  processedAt?: string;
 }
 
 export const categoryColors: { [key: string]: string } = {

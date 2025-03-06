@@ -4,6 +4,7 @@ import { bookmarks, articles } from "../db/schema";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { eq, and, desc } from "drizzle-orm";
 import { sql } from "drizzle-orm";
+import { create } from "domain";
 
 // Define Clerk user type
 interface ClerkUser {
@@ -74,7 +75,7 @@ bookmarksRoute.get("/", async (c) => {
         link: articles.link,
         category: articles.category,
         position: articles.position,
-        date: articles.date,
+        createdAt: articles.createdAt,
         bookmarkedAt: bookmarks.createdAt,
       })
       .from(bookmarks)
@@ -177,7 +178,7 @@ bookmarksRoute.get("/:articleId", async (c) => {
 
     return c.json({
       success: true,
-      isBookmarked: bookmark.length > 0,
+      isBookmarked: bookmark,
     });
   } catch (error) {
     console.error("Error checking bookmark status:", error);

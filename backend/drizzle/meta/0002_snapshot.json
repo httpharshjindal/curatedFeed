@@ -1,6 +1,6 @@
 {
-  "id": "c001f3de-3b0c-47f1-9ecf-eb615db6a85e",
-  "prevId": "4c4d53d7-0b43-4f89-8a9e-9ddc446e89ec",
+  "id": "7dcb842c-d414-4b87-976d-319c24b66a54",
+  "prevId": "07b21e46-03b5-42f5-9f33-e3384d0d9188",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -20,17 +20,17 @@
           "primaryKey": false,
           "notNull": true
         },
-        "snippet": {
-          "name": "snippet",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "link": {
           "name": "link",
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "snippet": {
+          "name": "snippet",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "category": {
           "name": "category",
@@ -45,21 +45,27 @@
           "primaryKey": false,
           "notNull": false
         },
-        "date": {
-          "name": "date",
+        "processed": {
+          "name": "processed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "processing_error": {
+          "name": "processing_error",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content": {
+          "name": "content",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -160,6 +166,82 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.processed_articles": {
+      "name": "processed_articles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "article_id": {
+          "name": "article_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refined_title": {
+          "name": "refined_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "refined_article": {
+          "name": "refined_article",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_takeaways": {
+          "name": "key_takeaways",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "original_content": {
+          "name": "original_content",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "processed_at": {
+          "name": "processed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "processed_articles_article_id_articles_id_fk": {
+          "name": "processed_articles_article_id_articles_id_fk",
+          "tableFrom": "processed_articles",
+          "tableTo": "articles",
+          "columnsFrom": [
+            "article_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
