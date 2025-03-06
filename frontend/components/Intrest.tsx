@@ -7,6 +7,7 @@ import { SignedOut, SignInButton, useAuth } from '@clerk/nextjs'
 import { Article } from '@/lib/utils'
 import { toast } from 'sonner'
 import SlidingPagination from './SlidingPagination'
+import { useInterest } from '@/context/InterestContext'
 
 export default function Intrest() {
   const { getToken, isLoaded } = useAuth()
@@ -19,6 +20,7 @@ export default function Intrest() {
   const [showSignInDialog, setShowSignInDialog] = useState(false)
   const [hasShownDialog, setHasShownDialog] = useState(false)
   const signInButtonRef = useRef<HTMLButtonElement>(null)
+  const { refreshTrigger } = useInterest()
   const [bookmarkedArticles, setBookmarkedArticles] = useState<Set<number>>(
     new Set()
   )
@@ -73,7 +75,7 @@ export default function Intrest() {
         `${process.env.NEXT_PUBLIC_API_URL}/articles/intrest?page=${currentPage}`
       )
     }
-  }, [token, currentPage])
+  }, [token, currentPage,refreshTrigger])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,7 +93,7 @@ export default function Intrest() {
 
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [token, hasShownDialog])
+  }, [token, hasShownDialog,refreshTrigger])
 
   useEffect(() => {
     if (showSignInDialog) {
