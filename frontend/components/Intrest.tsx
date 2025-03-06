@@ -23,7 +23,6 @@ export default function Intrest() {
     new Set()
   )
   const [bookmarkLoading, setBookmarkLoading] = useState<number | null>(null)
-  console.log("djfkasdfl")
   useEffect(() => {
     const fetchToken = async () => {
       try {
@@ -57,8 +56,10 @@ export default function Intrest() {
         }
 
         const data = await response.json()
+        console.log(data)
         setIntrestArticles(data.articles)
         setTotalPages(Math.ceil(data.total / 20)) // Assuming 20 articles per page
+
       } catch (err) {
         toast.error('Failed to fetch articles')
         setError(err instanceof Error ? err.message : 'An error occurred')

@@ -93,7 +93,7 @@ export default function Header() {
               <SignedIn>
                 <div className='flex flex-col items-end gap-4'>
                   <div className='px-4 py-2'>
-                    <UserButton />
+                    <UserButton/>
                   </div>
                   <div className='px-4 py-2'>
                     <div>

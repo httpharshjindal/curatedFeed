@@ -11,28 +11,35 @@ import {
 import Discover from '../components/Discover'
 import Interest from '../components/Intrest'
 
-
 export default function GetArticles() {
   const [tab, setTab] = useState('discover')
   const { getToken, isLoaded, isSignedIn } = useAuth()
-  const [token, setToken] = useState<string | null>(null)
+  
+  // This effect will run when authentication state changes
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      setTab('discover')
+    if (isLoaded) {
+      // If signed in, keep tab as is. If signed out, set to discover
+      if (!isSignedIn) {
+        setTab('discover')
+      }
     }
   }, [isLoaded, isSignedIn])
   
   return (
     <section>
-      <Tabs value={tab}>
+      <Tabs value={tab} defaultValue="discover">
         <TabsList className='w-full justify-around'>
-          <TabsTrigger value='discover' className='w-full'
-          onClick={() => setTab('discover')}
+          <TabsTrigger 
+            value='discover' 
+            className='w-full'
+            onClick={() => setTab('discover')}
           >
             Discover
           </TabsTrigger>
           <SignedIn>
-            <TabsTrigger value='intrest' className='w-full'
+            <TabsTrigger 
+              value='intrest' 
+              className='w-full'
               onClick={() => setTab('intrest')}
             >
               Interest

@@ -24,23 +24,43 @@ export function UpdateInterest({
   setOpen: (value: boolean) => void
 }) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const { getToken } = useAuth()
   const { triggerRefresh } = useInterest()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [token, setToken] = useState('')
   // Destructure and alias hook values
+  const { getToken, isLoaded } = useAuth()
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        if (isLoaded) {
+          // Only fetch token if Clerk is loaded
+          const fetchedToken = await getToken()
+          if (fetchedToken) {
+            setToken(fetchedToken)
+          }
+          console.log(fetchedToken)
+        }
+      } catch (err) {
+        setError('Failed to retrieve authentication token')
+      }
+    }
+    fetchToken()
+  }, [getToken, isLoaded])
+
   const {
     interests,
     loading: hookLoading,
     error: hookError,
     refreshInterests
-  } = useUserInterests(open)
+  } = useUserInterests(open, token)
 
   useEffect(() => {
     // Update local state based on the hook values
     setLoading(hookLoading)
-    if (interests.length == 0) {
+    if (interests && interests.length == 0) {
       toast.message('Set your interest')
     }
     if (interests) {
@@ -60,7 +80,6 @@ export function UpdateInterest({
     try {
       setLoading(true)
       setError(null)
-      const token = await getToken()
       if (selectedCategories.length < 3) {
         setError('Please select at least Three interest')
         toast.error('Please select at least Three interest')
@@ -80,10 +99,11 @@ export function UpdateInterest({
         }
       )
 
+      console.log(response)
       if (!response.ok) {
         throw new Error('Failed to update interests')
+        return
       }
-
       setOpen(false)
       triggerRefresh()
       router.replace('/')

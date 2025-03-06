@@ -71,7 +71,13 @@ articlesRoute.get("/intrest", authMiddleware, async (c) => {
     const totalCount = await db
       .select({ count: sql`count(*)` })
       .from(articles)
-      .where(inArray(articles.category, categories));
+      .where(
+        and(
+          isNull(articles.processingError),
+          eq(articles.processed, true),
+          isNotNull(articles.content)
+        )
+      );
 
     // Fetch paginated articles
     const interestArticles = await db
@@ -89,6 +95,9 @@ articlesRoute.get("/intrest", authMiddleware, async (c) => {
       .limit(pageSize)
       .offset(offset);
 
+    if (interestArticles.length === 0) {
+      throw new Error("No articles found");
+    }
     return c.json({
       success: true,
       articles: interestArticles,
@@ -114,9 +123,17 @@ articlesRoute.get("/discover", authMiddleware, async (c) => {
     const offset = (page - 1) * pageSize;
 
     // Get total count
-    const totalCount = await db.select({ count: sql`count(*)` }).from(articles);
+    const totalCount = await db
+      .select({ count: sql`count(*)` })
+      .from(articles)
+      .where(
+        and(
+          isNull(articles.processingError),
+          eq(articles.processed, true),
+          isNotNull(articles.content)
+        )
+      );
 
-    // Fetch paginated articles
     const allArticles = await db
       .select()
       .from(articles)
