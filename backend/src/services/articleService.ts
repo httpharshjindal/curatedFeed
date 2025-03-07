@@ -14,7 +14,6 @@ const firecrawl = new FirecrawlApp({
   apiKey: process.env.FIRECRAWL_API_KEY,
 });
 
-
 if (!process.env.GOOGLE_AI_API_KEY) {
   throw new Error("Missing GOOGLE_AI_API_KEY in environment variables.");
 }
@@ -24,9 +23,12 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
 export const fetchArticleLinks = async () => {
-  const newArticles = [];
+  const newArticles: any = [];
+  const results: any[] = []; // Initialize results array properly
+  
   try {
     const categories = categoryEnum.enumValues;
+    
     for (const category of categories) {
       let data = JSON.stringify({
         q: `latest ${category} articles`,
@@ -45,36 +47,44 @@ export const fetchArticleLinks = async () => {
       };
 
       const response = await axios.request(config);
-      const results = response.data.organic || [];
-
-      for (const result of results) {
-        const existingArticle = await db
-          .select()
-          .from(articles)
-          .where(eq(articles.link, result.link))
-          .limit(1);
-
-        if (existingArticle.length === 0) {
-          const [insertedArticle] = await db
-            .insert(articles)
-            .values({
-              title: result.title,
-              link: result.link,
-              snippet: result.snippet,
-              category: category,
-              position: result.position,
-              processed: false,
-            })
-            .returning();
-
-          newArticles.push(insertedArticle);
-          console.log(`Stored article reference: ${result.title}`);
-        }
+      if (response && response.data.organic) {
+        // Store category with each result for later use
+        const articlesWithCategory = response.data.organic.map((article: any) => ({
+          ...article,
+          category // Add category to each article
+        }));
+        
+        results.push(...articlesWithCategory); // Use push instead of append
       }
-
       console.log(`Fetched article links for ${category} category`);
       // Add delay between categories
       await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    // Now iterate over all results to store them
+    for (const result of results) {
+      const existingArticle = await db
+        .select()
+        .from(articles)
+        .where(eq(articles.link, result.link))
+        .limit(1);
+
+      if (existingArticle.length === 0) {
+        const [insertedArticle] = await db
+          .insert(articles)
+          .values({
+            title: result.title,
+            link: result.link,
+            snippet: result.snippet,
+            category: result.category, // Use the category we stored with each result
+            position: result.position,
+            processed: false,
+          })
+          .returning();
+
+        newArticles.push(insertedArticle);
+        console.log(`Stored article reference: ${result.title}`);
+      }
     }
 
     return newArticles;
@@ -138,7 +148,7 @@ export const processUnprocessedArticles = async (limit = 5) => {
         const aiResponse = result.response.text();
         let processedContent;
         try {
-          const jsonMatch = aiResponse.match(/```json\s*([\s\S]*?)\s*```/); 
+          const jsonMatch = aiResponse.match(/```json\s*([\s\S]*?)\s*```/);
           if (jsonMatch && jsonMatch[1]) {
             try {
               processedContent = JSON.parse(jsonMatch[1].trim()); // Parse extracted JSON with trimming
@@ -208,7 +218,7 @@ export const processUnprocessedArticles = async (limit = 5) => {
         await db
           .update(articles)
           .set({
-            processed: true,
+            processed: false,
             processingError:
               articleError.message || "Failed to process article",
           })
@@ -226,25 +236,25 @@ export const processUnprocessedArticles = async (limit = 5) => {
 
 export const runArticleProcessingWorkflow = async () => {
   console.log("Starting article processing workflow...");
-    const newArticles = await fetchArticleLinks();
+  const newArticles = await fetchArticleLinks();
   console.log(`Fetched ${newArticles.length} new articles`);
-  
 
   if (newArticles.length > 0) {
     const batchSize = 5;
     const numberOfBatches = Math.ceil(newArticles.length / batchSize);
-    console.log(`Processing ${numberOfBatches} batches of up to ${batchSize} articles each`);
-    
+    console.log(
+      `Processing ${numberOfBatches} batches of up to ${batchSize} articles each`
+    );
+
     for (let batch = 0; batch < numberOfBatches; batch++) {
       console.log(`Processing batch ${batch + 1} of ${numberOfBatches}`);
       await processUnprocessedArticles(batchSize);
-      
 
       if (batch < numberOfBatches - 1) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
   }
-  
+
   console.log("Article processing workflow completed");
 };
